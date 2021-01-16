@@ -53,9 +53,31 @@
                 {{ comment.content|md2html }}
             </div>
         </div>
+        <div class="row post-comment-response">
+            {% for commentresponse in comment.commentresponses %}
+            <div class="row post-comment-response">
+                <a name="comment_response_{{ commentresponse.id }}"></a>
+                <i class="fas fa-share"></i>
+                <h4 class="col-sm-3">
+                    <strong>{{ commentresponse.author.fullName }}</strong> {{ 'post.commented_on'|trans }}
+                    {# it's not mandatory to set the timezone in localizeddate(). This is done to
+                    avoid errors when the 'intl' PHP extension is not available and the application
+                    is forced to use the limited "intl polyfill", which only supports UTC and GMT #}
+                    <strong>{{ commentresponse.publishedAt|localizeddate('medium', 'short', null, 'UTC') }}</strong>
+                </h4>
+                <div class="col-sm-9">
+                    {{ commentresponse.content|md2html }}
+                </div>
+            </div>
+            {% else %}
+            <div class="post-comment-response">
+                <p>{{ 'post.no_comments_response'|trans }}</p>
+            </div>
+            {% endfor %}
+        </div>
     {% else %}
         <div class="post-comment">
-            <p>{{ 'post.no_comments'|trans }}</p>
+            <p>{{ 'post.no_comments_response'|trans }}</p>
         </div>
     {% endfor %}
 {% endblock %}
