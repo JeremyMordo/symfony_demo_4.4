@@ -327,6 +327,12 @@ body#blog_post_show .post-comment h4 strong {
   display: block
 }
 
+.subtitle {
+  font-family: $lato-font-path;
+  color: #b4bcc2;
+  font-size: 14px;
+}
+
 /* Page: 'Comment form error'
    ------------------------------------------------------------------------- */
 body#comment_form_error h1.text-danger {
