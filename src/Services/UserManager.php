@@ -7,5 +7,4 @@ use App\Repository\UserRepository;
 
 class UserManager extends UserRepository
 {
-
 }

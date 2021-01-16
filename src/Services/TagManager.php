@@ -7,5 +7,4 @@ use App\Repository\TagRepository;
 
 class TagManager extends TagRepository
 {
-
 }
