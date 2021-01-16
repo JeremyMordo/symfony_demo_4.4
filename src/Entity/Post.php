@@ -121,11 +121,11 @@ class Post
      */
     private $tags;
 
-//  /**
-//   * @ORM\Column(type="string", length=255, nullable=true)
-//   * @var string
-//   */
-//  private $subtitle;
+    /**
+    * @ORM\Column(type="string", length=255, nullable=true)
+    * @var string
+    */
+    private $subtitle;
 
     public function __construct()
     {
@@ -236,15 +236,15 @@ class Post
         return $this->tags;
     }
 
-//  public function getSubtitle(): ?string
-//  {
-//      return $this->subtitle;
-//  }
-//
-//  public function setSubtitle(?string $subtitle): self
-//  {
-//      $this->subtitle = $subtitle;
-//
-//      return $this;
-//  }
+    public function getSubtitle(): ?string
+    {
+        return $this->subtitle;
+    }
+
+    public function setSubtitle(?string $subtitle): self
+    {
+        $this->subtitle = $subtitle;
+
+        return $this;
+    }
 }
