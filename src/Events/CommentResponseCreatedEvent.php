@@ -14,7 +14,7 @@ namespace App\Events;
 use App\Entity\CommentResponse;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class CommentCreatedEvent extends Event
+class CommentResponseCreatedEvent extends Event
 {
     protected CommentResponse $commentResponse;
 

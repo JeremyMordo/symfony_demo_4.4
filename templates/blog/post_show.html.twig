@@ -53,6 +53,16 @@
                 {{ comment.content|md2html }}
             </div>
         </div>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {{ render(controller('App\\Controller\\BlogController::commentResponseForm', {'commentId': comment.id})) }}
+        {% else %}
+            <p>
+                <a class="btn btn-success" href="{{ path('security_login', {'redirect_to': app.request.pathInfo}) }}">
+                    <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}
+                </a>
+                {{ 'post.to_publish_a_comment'|trans }}
+            </p>
+        {% endif %}
         <div class="row post-comment-response">
             {% for commentresponse in comment.commentresponses %}
             <div class="row post-comment-response">

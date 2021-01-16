@@ -11,6 +11,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -75,6 +77,19 @@ class Comment
      */
     private $author;
 
+        /**
+     * @var Comment[]|ArrayCollection
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="CommentResponse",
+     *      mappedBy="comment",
+     *      orphanRemoval=true,
+     *      cascade={"persist"}
+     * )
+     * @ORM\OrderBy({"publishedAt": "DESC"})
+     */
+    private $commentResponses;
+
     public function __construct()
     {
         $this->publishedAt = new \DateTime();
@@ -134,4 +149,23 @@ class Comment
     {
         $this->post = $post;
     }
+
+    public function getCommentResponses(): Collection
+    {
+        return $this->commentResponses;
+    }
+
+    public function setCommentResponse(CommentResponse $commentResponse): void
+    {
+        $commentResponse->setComment($this);
+        if (!$this->commentResponses->contains($commentResponse)) {
+            $this->commentResponses->add($commentResponse);
+        }
+    }
+
+    public function removeCommentResponse(CommentResponse $commentResponse): void
+    {
+        $this->commentResponses->removeElement($commentResponse);
+    }
+
 }

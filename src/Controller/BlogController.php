@@ -16,6 +16,7 @@ use App\Entity\CommentResponse;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Events\CommentCreatedEvent;
+use App\Events\CommentResponseCreatedEvent;
 use App\Form\CommentType;
 use App\Services\PostManager;
 use App\Services\TagManager;
@@ -235,7 +236,7 @@ class BlogController extends AbstractController
             // passed in the event and they can even modify the execution flow, so
             // there's no guarantee that the rest of this controller will be executed.
             // See https://symfony.com/doc/current/components/event_dispatcher.html
-            $eventDispatcher->dispatch(new CommentCreatedEvent($commentResponse));
+            $eventDispatcher->dispatch(new CommentResponseCreatedEvent($commentResponse));
 
             return $this->redirectToRoute('blog_post', ['slug' => $post->getSlug()]);
         }
