@@ -7,5 +7,4 @@ use App\Repository\PostRepository;
 
 class PostManager extends PostRepository
 {
-
 }

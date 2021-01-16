@@ -16,8 +16,8 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Events\CommentCreatedEvent;
 use App\Form\CommentType;
-use App\Repository\PostRepository;
-use App\Repository\TagRepository;
+use App\Services\PostManager;
+use App\Services\TagManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Cache;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -49,16 +49,16 @@ class BlogController extends AbstractController
      * @param Request $request
      * @param int $page
      * @param string $_format
-     * @param PostRepository $posts
-     * @param TagRepository $tags
+     * @param PostManager $posts
+     * @param TagManager $tags
      * @return Response
      */
     public function index(
         Request $request,
         int $page,
         string $_format,
-        PostRepository $posts,
-        TagRepository $tags
+        PostManager $posts,
+        TagManager $tags
     ): Response {
         $tag = null;
         if ($request->query->has('tag')) {
@@ -165,10 +165,10 @@ class BlogController extends AbstractController
     /**
      * @Route("/search", methods={"GET"}, name="blog_search")
      * @param Request $request
-     * @param PostRepository $posts
+     * @param PostManager $posts
      * @return Response
      */
-    public function search(Request $request, PostRepository $posts): Response
+    public function search(Request $request, PostManager $posts): Response
     {
         if (!$request->isXmlHttpRequest()) {
             return $this->render('blog/search.html.twig');
