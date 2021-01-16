@@ -12,6 +12,7 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\CommentResponse;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Events\CommentCreatedEvent;
@@ -26,6 +27,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use DatetimeInterface;
 
 /**
  * Controller used to manage blog contents in the public part of the site.
@@ -193,5 +195,54 @@ class BlogController extends AbstractController
         }
 
         return $this->json($results);
+    }
+
+    /**
+     * @Route("/comment/{postSlug}/new", methods={"POST"}, name="comment_response_new")
+     * @IsGranted("IS_AUTHENTICATED_FULLY")
+     * @ParamConverter("post", options={"mapping": {"postSlug": "slug"}})
+     *
+     * NOTE: The ParamConverter mapping is required because the route parameter
+     * (postSlug) doesn't match any of the Doctrine entity properties (slug).
+     * See
+     * https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/converters.html#doctrine-converter
+     * @param Request $request
+     * @param Post $post
+     * @param Comment $comment
+     * @param EventDispatcherInterface $eventDispatcher
+     * @return Response
+     */
+    public function commentResponseNew(Request $request, Post $post, Comment $comment, EventDispatcherInterface $eventDispatcher): Response
+    {
+        $commentResponse = new CommentResponse();
+        $date = new DatetimeInterface("now");
+        /** @var User $user */
+        $user = $this->getUser();
+        $commentResponse->setAuthor($user);
+        $commentResponse->setComment($comment);
+        $commentResponse->setPublishesAt($date);
+
+        $form2 = $this->createForm(CommentResponseType::class, $commentResponse);
+        $form2->handleRequest($request);
+
+        if ($form2->isSubmitted() && $form2->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($commentResponse);
+            $em->flush();
+
+            // When an event is dispatched, Symfony notifies it to all the listeners
+            // and subscribers registered to it. Listeners can modify the information
+            // passed in the event and they can even modify the execution flow, so
+            // there's no guarantee that the rest of this controller will be executed.
+            // See https://symfony.com/doc/current/components/event_dispatcher.html
+            $eventDispatcher->dispatch(new CommentCreatedEvent($commentResponse));
+
+            return $this->redirectToRoute('blog_post', ['slug' => $post->getSlug()]);
+        }
+
+        return $this->render('blog/comment_response_form_error.html.twig', [
+            'post' => $post,
+            'form2' => $form2->createView(),
+        ]);
     }
 }
